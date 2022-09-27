@@ -6,7 +6,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    users = User.muestra_usuarios()
+    return render_template('index.html', usuarios=users)
 
 @app.route('/new')
 def new():
@@ -19,7 +20,23 @@ def create():
     User.guardar(request.form)
     return redirect('/')
 
+@app.route('/delete/<int:id>')
+def delete(id):
+    formulario = {"id": id} #diccionario que le ponemos como nombre de variable formulario
+    User.borrar(formulario)
+    return redirect('/')
 
+@app.route('/edit/<int:id>')
+def edit(id):
+    formulario = {"id": id}
+    user = User.mostrar(formulario) #Instancia de usuario
+    return render_template('edit.html', usuario = user)
+
+@app.route('/update', methods=['POST'])
+def update():
+    #request.form = diccionario con el formulario de edit.html
+    User.actualizar(request.form)
+    return redirect('/')
 
 
 

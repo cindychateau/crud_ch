@@ -17,3 +17,45 @@ class User:
         query = "INSERT INTO users(first_name, last_name, email) VALUES ( %(first_name)s, %(last_name)s, %(email)s )" #->INSERT INTO users(first_name, last_name, email) VALUES('Juana', 'De Arco', 'juana@codingdojo.com')
         result = connectToMySQL('esquema_usuarios_ch').query_db(query, formulario)
         return result
+    
+    @classmethod
+    def muestra_usuarios(cls):
+        query = "SELECT * FROM users"
+        results = connectToMySQL('esquema_usuarios_ch').query_db(query)
+        # [
+        #    {"id": "1", "first_name":"Elena", "last_name":"De Troya"..},
+        #    {"id": "2", "first_name":"Juana", "last_name":"De Arco"..}
+        #]
+        users = []
+        for u in results: #en u voy a estar guardando mi diccionario
+            #u = {"id": "1", "first_name":"Elena", "last_name":"De Troya"..}
+            user = cls(u) #user = User(u) -> {"id": "1", "first_name":"Elena", "last_name":"De Troya"..}
+            users.append(user)
+        
+        return users
+    
+    @classmethod
+    def borrar(cls, formulario):
+        #formulario = {"id":"1"}
+        query = "DELETE FROM users WHERE id = %(id)s"
+        result = connectToMySQL('esquema_usuarios_ch').query_db(query, formulario)
+        return result
+    
+    @classmethod
+    def mostrar(cls, formulario):
+        #formulario = {"id": "1"}
+        query = "SELECT * FROM users WHERE id = %(id)s" #Select SIEMPRE regresa una lista
+        result = connectToMySQL('esquema_usuarios_ch').query_db(query, formulario)
+        #result = [
+        #  {"id": "1", "first_name":"Elena", "last_name":"De Troya"..}   
+        #]
+        diccionario = result[0] #diccionario = {"id": "1", "first_name":"Elena", "last_name":"De Troya"..}
+        usuario = cls(diccionario) #usuario = User(diccionario) - Instancia de usuario
+        return usuario
+    
+    @classmethod
+    def actualizar(cls, formulario):
+        #formulario = {"id":"1", "first_name":"Elena", "last_name":"De Troya", "email":"elena@cd.com"}
+        query = "UPDATE users SET first_name=%(first_name)s, last_name=%(last_name)s, email=%(email)s WHERE id=%(id)s"
+        result = connectToMySQL('esquema_usuarios_ch').query_db(query, formulario)
+        return result
